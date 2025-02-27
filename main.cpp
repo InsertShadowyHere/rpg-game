@@ -92,10 +92,12 @@ int main() {
             cout << "hello" << endl;
         }
 
-        // if the left button is down, give jared a lil push
+        // if the left button is down, give bg a lil push
         if (isButtonPressed(sf::Mouse::Button::Left)) {
+            // Character moves left, screen moves right
             if (sf::Mouse::getPosition(window).x < window.getSize().x / 2)
                 bg_sprite.move({-5, 0});
+            // character moves right, screen moves left
             else
                 bg_sprite.move({5, 0});
         }
