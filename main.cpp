@@ -4,17 +4,63 @@
 
 using namespace std;
 
+/* This is the Camera class
+ * I'm not sure we need it yet but I made it anyways just in case
+ * Our goal for the camera is just to be able to change the position of all images in the world
+ * relative to our character
+ * We might end up using a player method for this though, im not sure
+ */
+class Camera {
+public:
+    int x;
+    int y;
+    Camera(int xc, int yc) {
+        x = xc;
+        y = yc;
+    }
+};
+
+/// Handles player data, BLOBbing, and such
+///
+/// @param id int
+/// @param uname string
+class Player {
+public:
+    int id = 1;
+    string uname;
+    long data = 1;
+
+    long blob() {
+        data += 1;
+        cout << "Player " << id << " data: " << data << endl;
+        return 0;
+    }
+
+    Player(string uname) {
+        id = next_id();
+        Player::uname = uname;
+
+    }
+private:
+    int next_id() {
+        return 0;
+    }
+};
+
+
 int main()
 {
     const string x = "I'm a string!";
     cout << x << std::endl;
+    Player player("Davis");
+    player.blob();
+    player.blob();
 
     // create the window and initialize some things
     sf::RenderWindow window(sf::VideoMode({800, 600}), "My window");
     window.setFramerateLimit(60); // call it once after creating the window
 
     // test image
-
     sf::Texture texture("assets/jared.png");
     sf::Sprite sprite(texture);
     sprite.setPosition({0, 380});
