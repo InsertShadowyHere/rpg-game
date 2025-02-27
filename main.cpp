@@ -1,6 +1,9 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <random>
+#include <unistd.h>
+#include <limits.h>
+#include <iostream>
 
 using namespace std;
 
@@ -44,6 +47,19 @@ private:
 
 
 int main() {
+    const size_t size = 1024;
+    // Allocate a character array to store the directory path
+    char buffer[size];
+
+    // Call _getcwd to get the current working directory and store it in buffer
+    if (getcwd(buffer, size) != NULL) {
+        // print the current working directory
+        cout << "Current working directory: " << buffer << endl;
+    }
+    else {
+        // If _getcwd returns NULL, print an error message
+        cerr << "Error getting current working directory" << endl;
+    }
     const string x = "I'm a string!";
     cout << x << std::endl;
     Player player("Davis");
@@ -95,8 +111,10 @@ int main() {
         // if the left button is down, give bg a lil push
         if (isButtonPressed(sf::Mouse::Button::Left)) {
             // Character moves left, screen moves right
-            if (sf::Mouse::getPosition(window).x < window.getSize().x / 2)
+            if (sf::Mouse::getPosition(window).x < window.getSize().x / 2) {
+                sprite.move({5,-5});
                 bg_sprite.move({-5, 0});
+            }
             // character moves right, screen moves left
             else
                 bg_sprite.move({5, 0});

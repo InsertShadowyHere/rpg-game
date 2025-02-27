@@ -220,6 +220,15 @@ SFML_DIR:PATH=/Users/1053730/.brew/lib/cmake/SFML
 SFML_DOC_DIR:PATH=/Users/1053730/.brew/share/doc/SFML
 
 //Value Computed by CMake
+client_BINARY_DIR:STATIC=/Users/1053730/CLionProjects/rpg-game/cmake-build-debug
+
+//Value Computed by CMake
+client_IS_TOP_LEVEL:STATIC=ON
+
+//Value Computed by CMake
+client_SOURCE_DIR:STATIC=/Users/1053730/CLionProjects/rpg-game
+
+//Value Computed by CMake
 rpg_game_BINARY_DIR:STATIC=/Users/1053730/CLionProjects/rpg-game/cmake-build-debug
 
 //Value Computed by CMake
@@ -227,6 +236,15 @@ rpg_game_IS_TOP_LEVEL:STATIC=ON
 
 //Value Computed by CMake
 rpg_game_SOURCE_DIR:STATIC=/Users/1053730/CLionProjects/rpg-game
+
+//Value Computed by CMake
+server_BINARY_DIR:STATIC=/Users/1053730/CLionProjects/rpg-game/cmake-build-debug
+
+//Value Computed by CMake
+server_IS_TOP_LEVEL:STATIC=ON
+
+//Value Computed by CMake
+server_SOURCE_DIR:STATIC=/Users/1053730/CLionProjects/rpg-game
 
 
 ########################
