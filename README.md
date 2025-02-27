@@ -1,3 +1,3 @@
 # rpg-game
 My friend and I are making an MORPG (it won't be massive) using C++, SFML, and ImGUI (for now). 
-![alt text](https://github.com/InsertShadowyHere/rpg-game/blob/main/assets/mean-girls-guy-rmbg.png)
+![jared](https://github.com/InsertShadowyHere/rpg-game/blob/main/assets/mean-girls-guy-rmbg.png)
