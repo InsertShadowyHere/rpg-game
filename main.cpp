@@ -9,16 +9,11 @@ using namespace std;
  * Our goal for the camera is just to be able to change the position of all images in the world
  * relative to our character
  * We might end up using a player method for this though, im not sure
+ *
+ * Movement is handled like this:
+ * When the player moves left, the scene moves right by the same amount
+ *
  */
-class Camera {
-public:
-    int x;
-    int y;
-    Camera(int xc, int yc) {
-        x = xc;
-        y = yc;
-    }
-};
 
 /// Handles player data, BLOBbing, and such
 ///
@@ -54,6 +49,8 @@ int main() {
     Player player("Davis");
     player.blob();
     player.blob();
+    sf::Texture bg_texture("assets/bg.png");
+    sf::Sprite bg_sprite(bg_texture);
 
     // create the window and initialize some things
     sf::RenderWindow window(sf::VideoMode({800, 600}), "My window");
@@ -86,9 +83,12 @@ int main() {
                 // move Jared
                 // Set window position
                 if (event->is<sf::Event::MouseButtonPressed>()) {
-
-                    sprite.move({10, -10});
-                    window.setPosition({10, 10});
+                    cout << sf::Mouse::getPosition().x << std::endl;
+                    cout << window.getSize().x / 2 << std::endl;
+                    if (sf::Mouse::getPosition(window).x < window.getSize().x / 2)
+                        bg_sprite.move({-5, 0});
+                    else
+                        bg_sprite.move({5, 0});
                 }
 
             }
@@ -109,6 +109,7 @@ int main() {
         // draw everything here...
         // window.draw(...);
         window.draw(sprite);
+        window.draw(bg_sprite);
 
         // end the current frame
         window.display();
