@@ -83,12 +83,7 @@ int main() {
                 // move Jared
                 // Set window position
                 if (event->is<sf::Event::MouseButtonPressed>()) {
-                    cout << sf::Mouse::getPosition().x << std::endl;
-                    cout << window.getSize().x / 2 << std::endl;
-                    if (sf::Mouse::getPosition(window).x < window.getSize().x / 2)
-                        bg_sprite.move({-5, 0});
-                    else
-                        bg_sprite.move({5, 0});
+
                 }
 
             }
@@ -99,7 +94,10 @@ int main() {
 
         // if the left button is down, give jared a lil push
         if (isButtonPressed(sf::Mouse::Button::Left)) {
-            sprite.move({1, -1});
+            if (sf::Mouse::getPosition(window).x < window.getSize().x / 2)
+                bg_sprite.move({-5, 0});
+            else
+                bg_sprite.move({5, 0});
         }
 
 
