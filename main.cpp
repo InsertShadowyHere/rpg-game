@@ -48,8 +48,7 @@ private:
 };
 
 
-int main()
-{
+int main() {
     const string x = "I'm a string!";
     cout << x << std::endl;
     Player player("Davis");
@@ -76,8 +75,7 @@ int main()
     while (window.isOpen())
     {
         // Check all window events triggered this run-through of the loop
-        while (const std::optional event = window.pollEvent())
-        {
+        while (const std::optional event = window.pollEvent()) {
             // "close requested" event: we close the window
             if (event->is<sf::Event::Closed>())
                 window.close();
@@ -94,15 +92,16 @@ int main()
                 }
 
             }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::Right)) {
-                cout << "hello" << endl;
-            }
+        }
+        if (isKeyPressed(sf::Keyboard::Scan::Right)) {
+            cout << "hello" << endl;
         }
 
         // if the left button is down, give jared a lil push
         if (isButtonPressed(sf::Mouse::Button::Left)) {
             sprite.move({1, -1});
         }
+
 
         // clear the window with black color
         window.clear(sf::Color::Black);
