@@ -4,7 +4,7 @@
 using namespace sf;
 
 int main() {
-    UdpSocket socket
+    UdpSocket socket;
     if (socket.bind(54000) != sf::Socket::Status::Done)
     {
         std::cout << "Error" << std::endl;
