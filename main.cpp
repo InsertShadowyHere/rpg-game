@@ -1,8 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <random>
-#include <stdlib.h>
-#include <cstdlib>
 
 using namespace std;
 
@@ -17,8 +15,9 @@ int main()
 
     // test image
 
-    sf::Texture texture("assets/mean-girls-guy-rmbg.png", false, sf::IntRect({0,0}, {320, 320}));
+    sf::Texture texture("assets/jared.png");
     sf::Sprite sprite(texture);
+    sprite.setPosition({0, 380});
 
 
     /* Main loop; run program while window is open.
@@ -44,17 +43,19 @@ int main()
                 // Set window position
                 if (event->is<sf::Event::MouseButtonPressed>()) {
 
-                    sprite.setPosition({sprite.getPosition().x, sprite.getPosition().y+10});
+                    sprite.move({10, -10});
                     window.setPosition({10, 10});
                 }
-
-
-
 
             }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::Right)) {
                 cout << "hello" << endl;
             }
+        }
+
+        // if the left button is down, give jared a lil push
+        if (isButtonPressed(sf::Mouse::Button::Left)) {
+            sprite.move({1, -1});
         }
 
         // clear the window with black color
