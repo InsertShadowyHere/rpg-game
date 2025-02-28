@@ -1,14 +1,12 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <random>
-#include <unistd.h>
-#include <limits.h>
-#include <iostream>
+#include <boost/ptr_container/ptr_vector.hpp>
 
 using namespace std;
 
 /* This is the Camera class
- * I'm not sure we need it yet but I made it anyways just in case
+ * I'm not sure whether we need it yet, but I made it anyway just in case
  * Our goal for the camera is just to be able to change the position of all images in the world
  * relative to our character
  * We might end up using a player method for this though, im not sure
@@ -18,7 +16,7 @@ using namespace std;
  *
  */
 
-/// Handles player data, BLOBbing, and such
+/// Handles player data, blobbing, and such
 ///
 /// @param id int
 /// @param uname string
@@ -28,45 +26,60 @@ public:
     string uname;
     long data = 1;
 
+    // placeholder function (should eventually return actionable data)
     long blob() {
         data += 1;
         cout << "Player " << id << " data: " << data << endl;
         return 0;
     }
+    long deblob() {
+        data -= 1;
+        return 0;
+    }
 
-    Player(string uname) {
+    explicit Player(const string &uname) {
         id = next_id();
         Player::uname = uname;
-
     }
+
 private:
-    int next_id() {
+    static int next_id() {
         return 0;
     }
 };
 
+class Game {
+public:
+    vector<Player*> players;
+
+    // Fetch player data, add player to vector
+    void add_player(const string &uname) {
+        auto *player = new Player(uname);
+        players.push_back(player);
+    }
+
+    void test_player_vector() {
+        for (int i = 0; i < players.size(); ++i) {
+            std::cout << "Player " << players[i]->id << ": " <<  players[0]->uname << std::endl;
+        }
+
+    }
+
+
+private:
+
+};
+
 
 int main() {
-    const size_t size = 1024;
-    // Allocate a character array to store the directory path
-    char buffer[size];
-
-    // Call _getcwd to get the current working directory and store it in buffer
-    if (getcwd(buffer, size) != NULL) {
-        // print the current working directory
-        cout << "Current working directory: " << buffer << endl;
-    }
-    else {
-        // If _getcwd returns NULL, print an error message
-        cerr << "Error getting current working directory" << endl;
-    }
     const string x = "I'm a string!";
     cout << x << std::endl;
     Player player("Davis");
-    player.blob();
-    player.blob();
     sf::Texture bg_texture("assets/bg.png");
     sf::Sprite bg_sprite(bg_texture);
+    Game game = Game();
+    game.add_player("Davis");
+    game.test_player_vector();
 
     // create the window and initialize some things
     sf::RenderWindow window(sf::VideoMode({800, 600}), "My window");
@@ -85,8 +98,7 @@ int main() {
      * update things that need to be updated
      * Render background
      * Render entities */
-    while (window.isOpen())
-    {
+    while (window.isOpen()) {
         // Check all window events triggered this run-through of the loop
         while (const std::optional event = window.pollEvent()) {
             // "close requested" event: we close the window
@@ -99,9 +111,7 @@ int main() {
                 // move Jared
                 // Set window position
                 if (event->is<sf::Event::MouseButtonPressed>()) {
-
                 }
-
             }
         }
         if (isKeyPressed(sf::Keyboard::Scan::Right)) {
@@ -112,7 +122,7 @@ int main() {
         if (isButtonPressed(sf::Mouse::Button::Left)) {
             // Character moves left, screen moves right
             if (sf::Mouse::getPosition(window).x < window.getSize().x / 2) {
-                sprite.move({5,-5});
+                sprite.move({5, -5});
                 bg_sprite.move({-5, 0});
             }
             // character moves right, screen moves left

@@ -6,6 +6,7 @@ set(SOURCE_FILES
         main.cpp
 )
 
+
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 include_directories(/usr/local/include)
 find_package(SFML 3.0.0 COMPONENTS System Window Graphics Network Audio REQUIRED)

@@ -14,6 +14,9 @@
 # EXTERNAL cache entries
 ########################
 
+//The directory containing a CMake configuration file for Boost.
+Boost_DIR:PATH=/Users/1053730/.brew/lib/cmake/Boost-1.87.0
+
 //Path to a program.
 CMAKE_ADDR2LINE:FILEPATH=CMAKE_ADDR2LINE-NOTFOUND
 
@@ -219,6 +222,18 @@ SFML_DIR:PATH=/Users/1053730/.brew/lib/cmake/SFML
 //Path to a file.
 SFML_DOC_DIR:PATH=/Users/1053730/.brew/share/doc/SFML
 
+//The directory containing a CMake configuration file for boost_*boost.
+boost_*boost_DIR:PATH=boost_*boost_DIR-NOTFOUND
+
+//The directory containing a CMake configuration file for boost_headers.
+boost_headers_DIR:PATH=/Users/1053730/.brew/lib/cmake/boost_headers-1.87.0
+
+//The directory containing a CMake configuration file for boost_here*.
+boost_here*_DIR:PATH=boost_here*_DIR-NOTFOUND
+
+//The directory containing a CMake configuration file for boost_libraries.
+boost_libraries_DIR:PATH=boost_libraries_DIR-NOTFOUND
+
 //Value Computed by CMake
 client_BINARY_DIR:STATIC=/Users/1053730/CLionProjects/rpg-game/cmake-build-debug
 
@@ -384,4 +399,6 @@ CMAKE_TAPI-ADVANCED:INTERNAL=1
 CMAKE_UNAME:INTERNAL=/usr/bin/uname
 //ADVANCED property for variable: CMAKE_VERBOSE_MAKEFILE
 CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: boost_headers_DIR
+boost_headers_DIR-ADVANCED:INTERNAL=1
 
