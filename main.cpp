@@ -1,26 +1,33 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Network.hpp>
 #include <iostream>
+#include <queue>
 #include <random>
 #include <thread>
 
 using namespace sf;
 
-Packet queue_packets() {
+std::deque<Packet*> packet_queue;
+
+void queue_packets() {
+    std::cout << "Packet thread is running!" << std::endl;
     UdpSocket socket;
     if (socket.bind(54000) != sf::Socket::Status::Done)
     {
         std::cout << "Error" << std::endl;
     }
-    Packet packet;
-    std::optional<IpAddress> sender;
-    unsigned short port;
-    if (socket.receive(packet, sender, port) != Socket::Status::Done)
-    {
-        // error...
+    while (true) {
+        Packet *packet = new Packet();
+        std::optional<IpAddress> sender;
+        unsigned short port;
+        if (socket.receive(*packet, sender, port) != Socket::Status::Done)
+        {
+            // error...
+        }
+        std::cout << "Received " << packet->getData() << " from " << sender->toString() << " on port " << port << std::endl;
+        packet_queue.push_back(packet);
     }
-    std::cout << "Received " << packet.getData() << " from " << sender->toString() << " on port " << port << std::endl;
-    return packet;
+
 
 }
 
@@ -35,6 +42,7 @@ public:
     int id = 1;
     string uname;
     long data = 1;
+    int x = 0, y = 0;
 
     // placeholder function (should eventually return actionable data)
     long blob() {
@@ -75,9 +83,38 @@ public:
 
     }
 
+    void process(Packet *packet) {
+        /* Packet types
+         * 8 - initialization - take char data and
+         */
+        cout << "Checking packet..." << endl;
+        int type;
+        *packet >> type;
+        cout << "Packet type: " << type << endl;
+        switch (type) {
+            case 0: {
+                // Initialization packet
+                string uname;
+                *packet >> uname;
+                add_player(uname);
+                cout << "Player " << uname << " added" << endl;
+                break;
+            }
+            case 1: {
+                // PosUpdate
+                int pid;
+                *packet >> pid;
+                for (Player *i : players)
+                    if (i->id == pid) {
+                        *packet >> i->x >> i->y;
+                        cout << "Player " << i->id << " position updated." << endl;
+                        break;
+                    }
+                break;
+            }
+        }
 
-private:
-
+    }
 };
 
 
@@ -108,8 +145,16 @@ int main() {
      * update things that need to be updated
      * Render background
      * Render entities */
-    //std::thread receiver(queue_packets());
+    std::thread receiver(queue_packets);
+    receiver.detach();
     while (window.isOpen()) {
+
+        if (!packet_queue.empty()) {
+            cout << "Not empty!" << endl;
+            cout << packet_queue.size() << endl;
+            game.process(packet_queue.front());
+            packet_queue.pop_front();
+        }
         // Check all window events triggered this run-through of the loop
         while (const std::optional event = window.pollEvent()) {
             // "close requested" event: we close the window
@@ -149,6 +194,12 @@ int main() {
         // window.draw(...);
         window.draw(sprite);
         window.draw(bg_sprite);
+        // if (!game.players.empty()) {
+        //     for (Player *i : game.players) {
+        //         break;
+        //     }
+        //
+        // }
 
         // end the current frame
         window.display();
