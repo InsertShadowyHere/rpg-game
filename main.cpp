@@ -6,17 +6,18 @@
 #include <thread>
 
 using namespace sf;
+using namespace std;
 
 std::deque<Packet *> packet_queue;
 
 void queue_packets() {
-    std::cout << "Packet thread is running!" << std::endl;
+    cout << "Packet thread is running!" << endl;
     UdpSocket socket;
-    if (socket.bind(54000) != sf::Socket::Status::Done)
-        std::cout << "Error" << std::endl;
+    if (socket.bind(54000) != Socket::Status::Done)
+        cout << "Error" << endl;
     while (true) {
         auto *packet = new Packet();
-        std::optional<IpAddress> sender;
+        optional<IpAddress> sender;
         unsigned short port;
         if (socket.receive(*packet, sender, port) != Socket::Status::Done) {
             // error...
@@ -26,7 +27,6 @@ void queue_packets() {
     }
 }
 
-using namespace std;
 
 /// Handles player data, blobbing, and such
 ///
@@ -34,10 +34,10 @@ using namespace std;
 /// @param uname string
 class Player {
 public:
-    int id = next_id();
+    int id;
     string uname;
-    long data = 1;
-    int x = 0, y = 0;
+    long data;
+    int x, y;
 
     // placeholder function (should eventually return actionable data)
     long blob() {
@@ -81,9 +81,6 @@ public:
     }
 
     void process(Packet *packet) {
-        /* Packet types
-         * 8 - initialization - take char data and
-         */
         cout << "START PACKET PROCESSING" << endl;
         int type;
         *packet >> type;
@@ -137,7 +134,6 @@ int main() {
     Sprite p_sprite(texture);
     p_sprite.scale({0.5, 0.5});
     p_sprite.setPosition({0, 380});
-
     p_sprite.setOrigin({static_cast<float>(p_sprite.getTexture().getSize().x/2), static_cast<float>(p_sprite.getTexture().getSize().y/2)});
 
     /* Main loop; run program while window is open.
@@ -201,5 +197,6 @@ int main() {
         // end the current frame
         window.display();
     }
+
     return 0;
 }

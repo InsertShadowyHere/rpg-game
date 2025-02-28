@@ -1,0 +1,41 @@
+Genre: Old-school RPG
+    2D Top-down
+    Live multiplayer
+    Inventory system
+    Quest system
+    Dialogue system
+    Character creation
+    Character progression
+    Equipment system
+    Magic system
+    Live combat (MMORPG style)
+    Crafting system
+    Player economy
+
+Tech stack:
+    C++ (with CMake)
+    SFML
+    ImGui
+
+Background:
+    We're two high-schoolers who are learning C++.
+    We're making this game for fun, and we plan on
+    sharing it with the school so we can play with our friends.
+
+Client-server model:
+   The game will be run on a server, and clients will connect to it.
+
+Hardware limitations:
+    16 GB RAM
+    500 GB Storage
+    Ethernet - CAT5e
+    Ubuntu GNOME
+
+General project constraints:
+    Needs to be able to handle ~20 people at once
+    Needs to be able to run on a school computer (<4 GB RAM at any given time)
+    Needs to be able to run on a school network
+
+Networking:
+    UDP will be used for sending common packets (positional updates)
+    TCP will be used for sending player blob data
