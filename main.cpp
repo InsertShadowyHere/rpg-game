@@ -1,20 +1,30 @@
 #include <SFML/Graphics.hpp>
+#include <SFML/Network.hpp>
 #include <iostream>
 #include <random>
-#include <boost/ptr_container/ptr_vector.hpp>
+#include <thread>
+
+using namespace sf;
+
+Packet queue_packets() {
+    UdpSocket socket;
+    if (socket.bind(54000) != sf::Socket::Status::Done)
+    {
+        std::cout << "Error" << std::endl;
+    }
+    Packet packet;
+    std::optional<IpAddress> sender;
+    unsigned short port;
+    if (socket.receive(packet, sender, port) != Socket::Status::Done)
+    {
+        // error...
+    }
+    std::cout << "Received " << packet.getData() << " from " << sender->toString() << " on port " << port << std::endl;
+    return packet;
+
+}
 
 using namespace std;
-
-/* This is the Camera class
- * I'm not sure whether we need it yet, but I made it anyway just in case
- * Our goal for the camera is just to be able to change the position of all images in the world
- * relative to our character
- * We might end up using a player method for this though, im not sure
- *
- * Movement is handled like this:
- * When the player moves left, the scene moves right by the same amount
- *
- */
 
 /// Handles player data, blobbing, and such
 ///
@@ -59,8 +69,8 @@ public:
     }
 
     void test_player_vector() {
-        for (int i = 0; i < players.size(); ++i) {
-            std::cout << "Player " << players[i]->id << ": " <<  players[0]->uname << std::endl;
+        for (const Player *i : players) {
+            std::cout << "Player " << i->id << ": " <<  players[0]->uname << std::endl;
         }
 
     }
@@ -98,6 +108,7 @@ int main() {
      * update things that need to be updated
      * Render background
      * Render entities */
+    //std::thread receiver(queue_packets());
     while (window.isOpen()) {
         // Check all window events triggered this run-through of the loop
         while (const std::optional event = window.pollEvent()) {
