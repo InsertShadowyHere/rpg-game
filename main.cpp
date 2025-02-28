@@ -15,7 +15,7 @@ void queue_packets() {
     if (socket.bind(54000) != sf::Socket::Status::Done)
         std::cout << "Error" << std::endl;
     while (true) {
-        Packet *packet = new Packet();
+        auto *packet = new Packet();
         std::optional<IpAddress> sender;
         unsigned short port;
         if (socket.receive(*packet, sender, port) != Socket::Status::Done) {
@@ -34,7 +34,7 @@ using namespace std;
 /// @param uname string
 class Player {
 public:
-    int id = 1;
+    int id = next_id();
     string uname;
     long data = 1;
     int x = 0, y = 0;
@@ -68,13 +68,15 @@ public:
 
     // Fetch player data, add player to vector
     void add_player(const string &uname) {
+        cout << "DEBUG: Adding player " << uname << endl;
         auto *player = new Player(uname);
         players.push_back(player);
     }
 
-    void test_player_vector() {
+    void print_players() {
+        std::cout << "DEBUG: Printing players" << std::endl;
         for (const Player *i: players) {
-            std::cout << "Player " << i->id << ": " << players[0]->uname << std::endl;
+            std::cout << "    Player " << i->id << ": " << players[0]->uname << std::endl;
         }
     }
 
@@ -82,17 +84,16 @@ public:
         /* Packet types
          * 8 - initialization - take char data and
          */
-        cout << "Checking packet..." << endl;
+        cout << "START PACKET PROCESSING" << endl;
         int type;
         *packet >> type;
-        cout << "Packet type: " << type << endl;
+        cout << "   Packet type: " << type << endl;
         switch (type) {
             case 0: {
                 // Initialization packet
                 string uname;
                 *packet >> uname;
                 add_player(uname);
-                cout << "Player " << uname << " added" << endl;
                 break;
             }
             case 1: {
@@ -102,9 +103,13 @@ public:
                 for (Player *i: players)
                     if (i->id == pid) {
                         *packet >> i->x >> i->y;
-                        cout << "Player " << i->id << " position updated." << endl;
+                        cout << "   Player " << i->id << " position updated." << endl;
                         break;
                     }
+                break;
+            }
+            default: {
+                cout << "   ALERT! Packet " << packet << "type unknown" << endl;
                 break;
             }
         }
@@ -121,7 +126,7 @@ int main() {
     // Main game object
     Game game;
     game.add_player("Davis");
-    game.test_player_vector();
+    game.print_players();
 
     // create the window and initialize some things
     RenderWindow window(sf::VideoMode({800, 600}), "My window");
@@ -129,9 +134,11 @@ int main() {
 
     // test image
     Texture texture("assets/jared.png");
-    Sprite sprite(texture);
-    sprite.setPosition({0, 380});
+    Sprite p_sprite(texture);
+    p_sprite.scale({0.5, 0.5});
+    p_sprite.setPosition({0, 380});
 
+    p_sprite.setOrigin({static_cast<float>(p_sprite.getTexture().getSize().x/2), static_cast<float>(p_sprite.getTexture().getSize().y/2)});
 
     /* Main loop; run program while window is open.
      * Check for events
@@ -162,11 +169,11 @@ int main() {
 
         // Handle key presses only when in focus
         if (window.hasFocus()) {
+            p_sprite.setPosition(Vector2f(Mouse::getPosition(window)));
             // if the left button is down, give bg a lil push
             if (isButtonPressed(sf::Mouse::Button::Left)) {
                 // Character moves left, screen moves right
                 if (sf::Mouse::getPosition(window).x < window.getSize().x / 2) {
-                    sprite.move({5, -5});
                     bg_sprite.move({-5, 0});
                 }
                 // character moves right, screen moves left
@@ -180,9 +187,10 @@ int main() {
 
 
         // DRAW EVERYTHING HERE
-        // window.draw(...);
-        window.draw(sprite);
         window.draw(bg_sprite);
+        // window.draw(...);
+        window.draw(p_sprite);
+
         // if (!game.players.empty()) {
         //     for (Player *i : game.players) {
         //         break;
