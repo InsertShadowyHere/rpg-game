@@ -29,7 +29,7 @@ Hardware limitations:
     16 GB RAM
     500 GB Storage
     Ethernet - CAT5e
-    Ubuntu GNOME
+    Ubuntu GNOME Desktop
 
 General project constraints:
     Needs to be able to handle ~20 people at once
