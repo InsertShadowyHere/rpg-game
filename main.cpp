@@ -36,8 +36,8 @@ class Player {
 public:
     int id;
     string uname;
-    long data;
-    int x, y;
+    long data{};
+    int x{}, y{};
 
     // placeholder function (should eventually return actionable data)
     long blob() {

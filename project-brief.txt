@@ -1,3 +1,5 @@
+-----------------GENERAL GAME DESIGN INFORMATION:-----------------
+
 Genre: Old-school RPG
     2D Top-down
     Live multiplayer
@@ -12,18 +14,17 @@ Genre: Old-school RPG
     Crafting system
     Player economy
 
-Tech stack:
-    C++ (with CMake)
-    SFML
-    ImGui
-
 Background:
     We're two high-schoolers who are learning C++.
     We're making this game for fun, and we plan on
     sharing it with the school so we can play with our friends.
 
-Client-server model:
-   The game will be run on a server, and clients will connect to it.
+General project constraints:
+    Needs to be able to handle ~20 people at once
+    Needs to be able to run on a school computer (<4 GB RAM at any given time)
+    Needs to be able to run on a school network
+
+-------------------HARD/SOFTWARE INFORMATION:-------------------
 
 Hardware limitations:
     16 GB RAM
@@ -31,11 +32,48 @@ Hardware limitations:
     Ethernet - CAT5e
     Ubuntu GNOME
 
-General project constraints:
-    Needs to be able to handle ~20 people at once
-    Needs to be able to run on a school computer (<4 GB RAM at any given time)
-    Needs to be able to run on a school network
+Tech stack:
+    C++ (with CMake)
+    SFML
+    ImGui
 
 Networking:
     UDP will be used for sending common packets (positional updates)
     TCP will be used for sending player blob data
+
+----------------------SERVER-CLIENT MODEL:----------------------
+
+Server responsibilities:
+    Data storage (player data, world data, etc)
+    Synchronization (player movement, player combat, global events)
+    Chat
+    RNG handling (loot generation, enemy spawning)
+    Global player actions (attacks, magic, etc)
+    Inventory management
+    Quest management
+    Dialogue cues
+    Player progression to ensure fair play
+    Economy
+    Authentication and authorization
+
+Server game loop:
+    ON INITIALIZATION PACKETS:
+        Render regions
+        Add players
+    For each region:
+
+
+
+Client responsibilities:
+    Character creation
+    Scene/UI rendering
+    Input handling
+    Audio management
+    Error handling
+
+Client game loop:
+    Handle UI (Game class)
+    Handle rendering (Region class)
+    Process input (Player class)
+    Send data to server
+    Receive data from server
