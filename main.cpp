@@ -13,7 +13,7 @@ std::deque<Packet *> packet_queue;
 void queue_packets() {
     cout << "Packet thread is running!" << endl;
     UdpSocket socket;
-    if (socket.bind(54000) != Socket::Status::Done)
+    if (socket.bind(46952) != Socket::Status::Done)
         cout << "Error" << endl;
     while (true) {
         auto *packet = new Packet();
@@ -37,7 +37,7 @@ public:
     int id;
     string uname;
     long data{};
-    int x{}, y{};
+    Vector2f pos;
 
     // placeholder function (should eventually return actionable data)
     long blob() {
@@ -60,6 +60,21 @@ private:
     static int next_id() {
         return 0;
     }
+};
+
+class BoundingBox {
+public:
+    Texture texture;
+    Sprite sprite;
+    string event;
+};
+
+
+class Region {
+public:
+    Texture background;
+    Sprite bg_sprite;
+    vector<BoundingBox> bounding_boxes;
 };
 
 class Game {
@@ -99,7 +114,7 @@ public:
                 *packet >> pid;
                 for (Player *i: players)
                     if (i->id == pid) {
-                        *packet >> i->x >> i->y;
+                        *packet >> i->pos.x >> i->pos.y;
                         cout << "   Player " << i->id << " position updated." << endl;
                         break;
                     }
@@ -123,10 +138,11 @@ int main() {
     // Main game object
     Game game;
     game.add_player("Davis");
+    game.players[0]->pos = {400, 300};
     game.print_players();
 
     // create the window and initialize some things
-    RenderWindow window(sf::VideoMode({800, 600}), "My window");
+    RenderWindow window(VideoMode({800, 600}), "My window");
     window.setFramerateLimit(60); // call it once after creating the window
 
     // test image
@@ -144,6 +160,7 @@ int main() {
      * Render background
      * Render entities */
     std::thread receiver(queue_packets);
+
     receiver.detach();
     // eventually should be triggered by initialization packets
     while (window.isOpen()) {
@@ -156,10 +173,10 @@ int main() {
         // Check all window events triggered this run-through of the loop
         while (const std::optional event = window.pollEvent()) {
             // "close requested" event: we close the window
-            if (event->is<sf::Event::Closed>())
+            if (event->is<Event::Closed>())
                 window.close();
         }
-        if (isKeyPressed(sf::Keyboard::Scan::Right)) {
+        if (isKeyPressed(Keyboard::Scan::Right)) {
             cout << "hello" << endl;
         }
 
@@ -167,9 +184,10 @@ int main() {
         if (window.hasFocus()) {
             p_sprite.setPosition(Vector2f(Mouse::getPosition(window)));
             // if the left button is down, give bg a lil push
-            if (isButtonPressed(sf::Mouse::Button::Left)) {
+            if (isButtonPressed(Mouse::Button::Left)) {
+                game.players[0]->pos.x += 1;
                 // Character moves left, screen moves right
-                if (sf::Mouse::getPosition(window).x < window.getSize().x / 2) {
+                if (Mouse::getPosition(window).x < window.getSize().x / 2) {
                     bg_sprite.move({5, 0});
                 }
                 // character moves right, screen moves left
@@ -178,20 +196,18 @@ int main() {
             }
         }
 
+
         // clear the window with black color
-        window.clear(sf::Color::Black);
+        window.clear(Color::Black);
 
         // DRAW EVERYTHING HERE
         window.draw(bg_sprite);
+        for (Player *i : game.players) {
+            p_sprite.setPosition(i->pos);
+            window.draw(p_sprite);
+        }
         // window.draw(...);
-        window.draw(p_sprite);
 
-        // if (!game.players.empty()) {
-        //     for (Player *i : game.players) {
-        //         break;
-        //     }
-        //
-        // }
 
         // end the current frame
         window.display();

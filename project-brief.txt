@@ -30,7 +30,7 @@ Hardware limitations:
     16 GB RAM
     500 GB Storage
     Ethernet - CAT5e
-    Ubuntu GNOME
+    Ubuntu GNOME Desktop
 
 Tech stack:
     C++ (with CMake)
