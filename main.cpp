@@ -9,20 +9,23 @@ using namespace sf;
 using namespace std;
 
 std::deque<Packet *> packet_queue;
+//sudo lsof -i -P -n | grep LISTEN
+const unsigned short port = 9774;
 
 void queue_packets() {
+    cout << "IP Address: " << IpAddress(IpAddress::getLocalAddress().value()).toString() << endl;
     cout << "Packet thread is running!" << endl;
     UdpSocket socket;
-    if (socket.bind(46952) != Socket::Status::Done)
-        cout << "Error" << endl;
+    if (socket.bind(port) != Socket::Status::Done)
+        cout << "Socket bind failed!" << endl;
     while (true) {
         auto *packet = new Packet();
         optional<IpAddress> sender;
-        unsigned short port;
-        if (socket.receive(*packet, sender, port) != Socket::Status::Done) {
+        unsigned short temp_port;
+        if (socket.receive(*packet, sender, temp_port) != Socket::Status::Done) {
             // error...
         }
-        std::cout << "DEBUG: Received data from " << sender->toString() << " on port " << port << std::endl;
+        std::cout << "DEBUG: Received data from " << sender->toString() << " on port " << temp_port << std::endl;
         packet_queue.push_back(packet);
     }
 }
@@ -38,6 +41,7 @@ public:
     string uname;
     long data{};
     Vector2f pos;
+    int region;
 
     // placeholder function (should eventually return actionable data)
     long blob() {
@@ -129,6 +133,8 @@ public:
 };
 
 
+
+
 int main() {
     // texture initialization (eventually change to region struct)
     // eventually should be handled through initialization/region-swap packets
@@ -142,7 +148,10 @@ int main() {
     game.print_players();
 
     // create the window and initialize some things
-    RenderWindow window(VideoMode({800, 600}), "My window");
+    const unsigned window_width = VideoMode::getDesktopMode().size.x / 2;
+    const unsigned window_height = VideoMode::getDesktopMode().size.y;
+    RenderWindow window(VideoMode({window_width, window_height}), "Server");
+    window.setPosition({0,0});
     window.setFramerateLimit(60); // call it once after creating the window
 
     // test image
@@ -170,12 +179,18 @@ int main() {
             packet_queue.pop_front();
         }
 
+
         // Check all window events triggered this run-through of the loop
         while (const std::optional event = window.pollEvent()) {
             // "close requested" event: we close the window
             if (event->is<Event::Closed>())
                 window.close();
+
         }
+
+
+
+
         if (isKeyPressed(Keyboard::Scan::Right)) {
             cout << "hello" << endl;
         }
@@ -212,6 +227,5 @@ int main() {
         // end the current frame
         window.display();
     }
-
     return 0;
 }

@@ -1,3 +1,4 @@
 /Users/1053730/CLionProjects/rpg-game/cmake-build-debug/CMakeFiles/rpg_game.dir
+/Users/1053730/CLionProjects/rpg-game/cmake-build-debug/CMakeFiles/client.dir
 /Users/1053730/CLionProjects/rpg-game/cmake-build-debug/CMakeFiles/edit_cache.dir
 /Users/1053730/CLionProjects/rpg-game/cmake-build-debug/CMakeFiles/rebuild_cache.dir

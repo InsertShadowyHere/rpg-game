@@ -73,6 +73,39 @@ build rpg_game: CXX_EXECUTABLE_LINKER__rpg_game_Debug CMakeFiles/rpg_game.dir/ma
   TARGET_FILE = rpg_game
   TARGET_PDB = rpg_game.dbg
 
+# =============================================================================
+# Object build statements for EXECUTABLE target client
+
+
+#############################################
+# Order-only phony target for client
+
+build cmake_object_order_depends_target_client: phony || .
+
+build CMakeFiles/client.dir/client.cpp.o: CXX_COMPILER__client_unscanned_Debug /Users/1053730/CLionProjects/rpg-game/client.cpp || cmake_object_order_depends_target_client
+  DEP_FILE = CMakeFiles/client.dir/client.cpp.o.d
+  FLAGS = -g -std=gnu++20 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -fcolor-diagnostics
+  INCLUDES = -I/usr/local/include -isystem /Users/1053730/.brew/include
+  OBJECT_DIR = CMakeFiles/client.dir
+  OBJECT_FILE_DIR = CMakeFiles/client.dir
+
+
+# =============================================================================
+# Link build statements for EXECUTABLE target client
+
+
+#############################################
+# Link the executable client
+
+build client: CXX_EXECUTABLE_LINKER__client_Debug CMakeFiles/client.dir/client.cpp.o | /Users/1053730/.brew/lib/libsfml-graphics.3.0.0.dylib /Users/1053730/.brew/lib/libsfml-audio.3.0.0.dylib /Users/1053730/.brew/lib/libsfml-network.3.0.0.dylib /Users/1053730/.brew/lib/libsfml-window.3.0.0.dylib /Users/1053730/.brew/lib/libsfml-system.3.0.0.dylib
+  FLAGS = -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk
+  LINK_LIBRARIES = -Wl,-rpath,/Users/1053730/.brew/lib  /Users/1053730/.brew/lib/libsfml-graphics.3.0.0.dylib  /Users/1053730/.brew/lib/libsfml-audio.3.0.0.dylib  /Users/1053730/.brew/lib/libsfml-network.3.0.0.dylib  /Users/1053730/.brew/lib/libsfml-window.3.0.0.dylib  /Users/1053730/.brew/lib/libsfml-system.3.0.0.dylib
+  OBJECT_DIR = CMakeFiles/client.dir
+  POST_BUILD = :
+  PRE_LINK = :
+  TARGET_FILE = client
+  TARGET_PDB = client.dbg
+
 
 #############################################
 # Utility command for edit_cache
@@ -107,7 +140,7 @@ build rebuild_cache: phony CMakeFiles/rebuild_cache.util
 #############################################
 # Folder: /Users/1053730/CLionProjects/rpg-game/cmake-build-debug
 
-build all: phony rpg_game
+build all: phony rpg_game client
 
 # =============================================================================
 # Built-in targets

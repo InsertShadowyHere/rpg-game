@@ -1,5 +1,4 @@
------------------GENERAL GAME DESIGN INFORMATION:-----------------
-
+----------------GENERAL GAME DESIGN INFORMATION:----------------
 Genre: Old-school RPG
     2D Top-down
     Live multiplayer
@@ -25,7 +24,6 @@ General project constraints:
     Needs to be able to run on a school network
 
 -------------------HARD/SOFTWARE INFORMATION:-------------------
-
 Hardware limitations:
     16 GB RAM
     500 GB Storage
@@ -42,7 +40,6 @@ Networking:
     TCP will be used for sending player blob data
 
 ----------------------SERVER-CLIENT MODEL:----------------------
-
 Server responsibilities:
     Data storage (player data, world data, etc)
     Synchronization (player movement, player combat, global events)
@@ -62,8 +59,6 @@ Server game loop:
         Add players
     For each region:
 
-
-
 Client responsibilities:
     Character creation
     Scene/UI rendering
@@ -77,3 +72,14 @@ Client game loop:
     Process input (Player class)
     Send data to server
     Receive data from server
+
+-------------------CLASS/FUNCTION STRUCTURE:--------------------
+Server:
+    Classes:
+        pass
+    Functions:
+        pass
+    Threads:
+        Main - handle game state handling
+        Network - handle packet reception
+        Database - handle data storage & retrieval
