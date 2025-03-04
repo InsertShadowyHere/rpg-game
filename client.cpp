@@ -8,16 +8,23 @@ using namespace sf;
 using namespace std;
 
 std::deque<Packet *> packet_queue;
-//sudo lsof -i -P -n | grep LISTEN
-const unsigned short port = 9774;
+// lsof -i -P -n | grep LISTEN
+const unsigned short port = 567;
+
+
+
+
 
 class Player {
 public:
     int id;
     string uname;
-    long data{};
+    long data;
     Vector2f pos;
     int region;
+    string texture_path;
+    Sprite self;
+    Texture texture;
 
     // placeholder function (should eventually return actionable data)
     long blob() {
@@ -31,23 +38,28 @@ public:
         return 0;
     }
 
-    explicit Player(const string &uname) {
-        id = next_id();
-        Player::uname = uname;
-    }
-
 private:
     static int next_id() {
         return 0;
     }
 };
 
+Packet& operator<<(Packet& packet, const Player& player)
+{
+    return packet << player.id << player.uname << player.pos.x << player.pos.y << player.region << player.texture_path;
+}
+
+Packet& operator>>(sf::Packet& packet, Player& player)
+{
+    return packet >> player.id >> player.uname >> player.pos.x >> player.pos.y >> player.region >> player.texture_path;
+}
+
 
 void queue_packets() {
-    cout << "Packet thread is running!" << endl;
+    cout << "DEBUG: Thread queuing packets!" << endl;
     UdpSocket socket;
-    if (socket.bind(port) != Socket::Status::Done)
-        cout << "Error" << endl;
+    // if (socket.bind(port) != Socket::Status::Done)
+    //     cout << "Couldn't bind to port." << endl;
     while (true) {
         auto *packet = new Packet();
         optional<IpAddress> sender;
@@ -67,8 +79,17 @@ void queue_packets() {
 }
 
 void process_packets(Player *player) {
+    cout << "DEBUG: Thread processing packets!" << endl;
     while (true) {
-        if (!packet_queue.empty()) {
+        while (!packet_queue.empty()) {
+            cout << "DEBUG: Received packet!" << endl;
+            short type;
+            *packet_queue.front() >> type;
+            if (type == 0) {
+                *packet_queue.front() >> *player;
+                cout << "DEBUG: Player initialized with packet!";
+            }
+
             // process packets
         }
     }
@@ -76,8 +97,9 @@ void process_packets(Player *player) {
 
 
 int main() {
-    const unsigned window_width = VideoMode::getDesktopMode().size.x / 2;
-    const unsigned window_height = VideoMode::getDesktopMode().size.y;
+    sleep(seconds(1));
+    const unsigned short window_width = VideoMode::getDesktopMode().size.x / 2;
+    const unsigned short window_height = VideoMode::getDesktopMode().size.y;
     RenderWindow window(sf::VideoMode({window_width, window_height}), "Client");
     window.setPosition({static_cast<int>(window_width), 0});
     window.setFramerateLimit(60); // call it once after creating the window
@@ -94,8 +116,6 @@ int main() {
     bool isMovingUp;
     bool isMovingDown;
 
-    Player player("Davis");
-
 
 
     UdpSocket socket;
@@ -104,10 +124,33 @@ int main() {
     Clock clock;
     int speed = 200;
 
+
+
+    // establish server connection & initialize
+    string uname;
+    cout << "Enter username: ";
+    // cin >> uname;
+    cout << "\nDEBUG: entering auto-username" << endl;
+    uname = "auto";
+    Player* player = nullptr;
     std::thread receiver(queue_packets);
     receiver.detach();
-    std::thread processor(process_packets, &player);
+    std::thread processor(process_packets, ref(player));
     processor.detach();
+    sleep(seconds(1));
+    Packet p;
+    p << 0 << uname;
+    cout << "Sending init packet." << endl;
+    if (socket.send(p, recipient, port) != Socket::Status::Done)
+    {
+        cout << "Couldn't send initialization packet." << endl;
+    }
+
+    while (player == nullptr) {
+        sleep(milliseconds(100));
+        cout << "Waiting for confirmation on init packet..." << endl;
+    }
+    cout << "Good to go!" << endl;
     // eventually should be triggered by initialization packets
     while (window.isOpen()) {
         // set timedelta
@@ -167,15 +210,15 @@ int main() {
         p << 1 << 0 << pos.x << pos.y;
         if (socket.send(p, recipient, port) != Socket::Status::Done)
         {
-            std::cout << "didn't send socket for some reason" << std::endl;
+            std::cout << "didn't send packet for some reason" << std::endl;
         }
 
 
         // clear the window with black color
-        window.clear(sf::Color::Black);
-        p_sprite.setPosition(pos);
+        window.clear(Color::Black);
+        player->self.setPosition(pos);
         // DRAW EVERYTHING HERE
-        window.draw(p_sprite);
+        window.draw(player->self);
 
         window.display();
     }

@@ -49,8 +49,8 @@ cmake_ninja_workdir = /Users/1053730/CLionProjects/rpg-game/cmake-build-debug/
 
 build cmake_object_order_depends_target_rpg_game: phony || .
 
-build CMakeFiles/rpg_game.dir/main.cpp.o: CXX_COMPILER__rpg_game_unscanned_Debug /Users/1053730/CLionProjects/rpg-game/main.cpp || cmake_object_order_depends_target_rpg_game
-  DEP_FILE = CMakeFiles/rpg_game.dir/main.cpp.o.d
+build CMakeFiles/rpg_game.dir/server.cpp.o: CXX_COMPILER__rpg_game_unscanned_Debug /Users/1053730/CLionProjects/rpg-game/server.cpp || cmake_object_order_depends_target_rpg_game
+  DEP_FILE = CMakeFiles/rpg_game.dir/server.cpp.o.d
   FLAGS = -g -std=gnu++20 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -fcolor-diagnostics
   INCLUDES = -I/usr/local/include -isystem /Users/1053730/.brew/include
   OBJECT_DIR = CMakeFiles/rpg_game.dir
@@ -64,7 +64,7 @@ build CMakeFiles/rpg_game.dir/main.cpp.o: CXX_COMPILER__rpg_game_unscanned_Debug
 #############################################
 # Link the executable rpg_game
 
-build rpg_game: CXX_EXECUTABLE_LINKER__rpg_game_Debug CMakeFiles/rpg_game.dir/main.cpp.o | /Users/1053730/.brew/lib/libsfml-graphics.3.0.0.dylib /Users/1053730/.brew/lib/libsfml-audio.3.0.0.dylib /Users/1053730/.brew/lib/libsfml-network.3.0.0.dylib /Users/1053730/.brew/lib/libsfml-window.3.0.0.dylib /Users/1053730/.brew/lib/libsfml-system.3.0.0.dylib
+build rpg_game: CXX_EXECUTABLE_LINKER__rpg_game_Debug CMakeFiles/rpg_game.dir/server.cpp.o | /Users/1053730/.brew/lib/libsfml-graphics.3.0.0.dylib /Users/1053730/.brew/lib/libsfml-audio.3.0.0.dylib /Users/1053730/.brew/lib/libsfml-network.3.0.0.dylib /Users/1053730/.brew/lib/libsfml-window.3.0.0.dylib /Users/1053730/.brew/lib/libsfml-system.3.0.0.dylib
   FLAGS = -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk
   LINK_LIBRARIES = -Wl,-rpath,/Users/1053730/.brew/lib  /Users/1053730/.brew/lib/libsfml-graphics.3.0.0.dylib  /Users/1053730/.brew/lib/libsfml-audio.3.0.0.dylib  /Users/1053730/.brew/lib/libsfml-network.3.0.0.dylib  /Users/1053730/.brew/lib/libsfml-window.3.0.0.dylib  /Users/1053730/.brew/lib/libsfml-system.3.0.0.dylib
   OBJECT_DIR = CMakeFiles/rpg_game.dir

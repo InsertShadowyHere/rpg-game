@@ -4,25 +4,26 @@
 #include <queue>
 #include <random>
 #include <thread>
+#include <nlohmann/json.hpp>
+#include <fstream>
 
 using namespace sf;
 using namespace std;
+using namespace nlohmann;
 
 std::deque<Packet *> packet_queue;
 //sudo lsof -i -P -n | grep LISTEN
-const unsigned short port = 9774;
+const unsigned short port = 567;
 
-void queue_packets() {
-    cout << "IP Address: " << IpAddress(IpAddress::getLocalAddress().value()).toString() << endl;
-    cout << "Packet thread is running!" << endl;
-    UdpSocket socket;
-    if (socket.bind(port) != Socket::Status::Done)
+void queue_packets(UdpSocket *socket) {
+    cout << "DEBUG: Queuing packets!" << endl;
+    if (socket->bind(port) != Socket::Status::Done)
         cout << "Socket bind failed!" << endl;
     while (true) {
         auto *packet = new Packet();
         optional<IpAddress> sender;
         unsigned short temp_port;
-        if (socket.receive(*packet, sender, temp_port) != Socket::Status::Done) {
+        if (socket->receive(*packet, sender, temp_port) != Socket::Status::Done) {
             // error...
         }
         std::cout << "DEBUG: Received data from " << sender->toString() << " on port " << temp_port << std::endl;
@@ -39,9 +40,12 @@ class Player {
 public:
     int id;
     string uname;
-    long data{};
+    long data;
     Vector2f pos;
     int region;
+    string texture_path;
+    Sprite self;
+    Texture texture;
 
     // placeholder function (should eventually return actionable data)
     long blob() {
@@ -55,16 +59,38 @@ public:
         return 0;
     }
 
-    explicit Player(const string &uname) {
+    explicit Player(const string &username): self(texture) {
         id = next_id();
-        Player::uname = uname;
+        uname = username;
+        ifstream f("player-data.json");
+        json data = json::parse(f)[uname];
+        pos.x = data["pos-x"];
+        pos.y = data["pos-y"];
+        region = data["region"];
+        texture_path = data["sprite-path"];
+        cout << "DEBUG: Initializing player " << username << endl;
+        texture = Texture(texture_path);
+        self = Sprite(texture);
+        self.setScale({0.5, 0.5});
+        self.setOrigin({static_cast<float>(texture.getSize().x/2), static_cast<float>(texture.getSize().y/2)});
     }
+
+
 
 private:
     static int next_id() {
         return 0;
     }
 };
+Packet& operator<<(Packet& packet, const Player& player)
+{
+    return packet << player.id << player.uname << player.pos.x << player.pos.y << player.region << player.texture_path;
+}
+
+Packet& operator>>(sf::Packet& packet, Player& player)
+{
+    return packet >> player.id >> player.uname >> player.pos.x >> player.pos.y >> player.region >> player.texture_path;
+}
 
 class BoundingBox {
 public:
@@ -86,9 +112,8 @@ public:
     vector<Player *> players;
 
     // Fetch player data, add player to vector
-    void add_player(const string &uname) {
-        cout << "DEBUG: Adding player " << uname << endl;
-        auto *player = new Player(uname);
+    void add_player(Player *player) {
+        cout << "DEBUG: Adding player " << player->uname << endl;
         players.push_back(player);
     }
 
@@ -99,7 +124,7 @@ public:
         }
     }
 
-    void process(Packet *packet) {
+    void process(Packet *packet, UdpSocket *socket) {
         cout << "START PACKET PROCESSING" << endl;
         int type;
         *packet >> type;
@@ -109,7 +134,15 @@ public:
                 // Initialization packet
                 string uname;
                 *packet >> uname;
-                add_player(uname);
+                Player p(uname);
+                Packet init_packet;
+                init_packet << p;
+                IpAddress recipient = IpAddress(IpAddress::getLocalAddress().value());
+                if (socket->send(init_packet, recipient, port) != Socket::Status::Done) {
+                    cout << "Couldn't confirm player initialization." << endl;
+                }
+                cout << "Confirmed palyer initialization" << endl;
+                add_player(&p);
                 break;
             }
             case 1: {
@@ -138,29 +171,22 @@ public:
 int main() {
     // texture initialization (eventually change to region struct)
     // eventually should be handled through initialization/region-swap packets
+    UdpSocket socket;
     Texture bg_texture("assets/bg.png");
     Sprite bg_sprite(bg_texture);
 
     // Main game object
     Game game;
-    game.add_player("Davis");
-    game.players[0]->pos = {400, 300};
-    game.print_players();
+
 
     // create the window and initialize some things
     const unsigned window_width = VideoMode::getDesktopMode().size.x / 2;
     const unsigned window_height = VideoMode::getDesktopMode().size.y;
     RenderWindow window(VideoMode({window_width, window_height}), "Server");
     window.setPosition({0,0});
-    window.setFramerateLimit(60); // call it once after creating the window
+    window.setFramerateLimit(60);
 
     // test image
-    Texture texture("assets/jared.png");
-    Sprite p_sprite(texture);
-    p_sprite.scale({0.5, 0.5});
-    p_sprite.setPosition({0, 380});
-    p_sprite.setOrigin({static_cast<float>(p_sprite.getTexture().getSize().x/2), static_cast<float>(p_sprite.getTexture().getSize().y/2)});
-
     /* Main loop; run program while window is open.
      * Check for events
      * Take server data
@@ -168,14 +194,14 @@ int main() {
      * update things that need to be updated
      * Render background
      * Render entities */
-    std::thread receiver(queue_packets);
-
+    std::thread receiver(queue_packets, &socket);
     receiver.detach();
+
     // eventually should be triggered by initialization packets
     while (window.isOpen()) {
         // Processes packets
         if (!packet_queue.empty()) {
-            game.process(packet_queue.front());
+            game.process(packet_queue.front(), &socket);
             packet_queue.pop_front();
         }
 
@@ -197,7 +223,6 @@ int main() {
 
         // Handle key presses only when in focus
         if (window.hasFocus()) {
-            p_sprite.setPosition(Vector2f(Mouse::getPosition(window)));
             // if the left button is down, give bg a lil push
             if (isButtonPressed(Mouse::Button::Left)) {
                 game.players[0]->pos.x += 1;
@@ -218,8 +243,8 @@ int main() {
         // DRAW EVERYTHING HERE
         window.draw(bg_sprite);
         for (Player *i : game.players) {
-            p_sprite.setPosition(i->pos);
-            window.draw(p_sprite);
+            i->self.setPosition(i->pos);
+            window.draw(i->self);
         }
         // window.draw(...);
 

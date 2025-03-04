@@ -243,6 +243,9 @@ client_IS_TOP_LEVEL:STATIC=ON
 //Value Computed by CMake
 client_SOURCE_DIR:STATIC=/Users/1053730/CLionProjects/rpg-game
 
+//The directory containing a CMake configuration file for nlohmann_json.
+nlohmann_json_DIR:PATH=nlohmann_json_DIR-NOTFOUND
+
 //Value Computed by CMake
 rpg_game_BINARY_DIR:STATIC=/Users/1053730/CLionProjects/rpg-game/cmake-build-debug
 

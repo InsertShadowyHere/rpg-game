@@ -1,0 +1,10 @@
+For anyone trying to compile and run the program:
+
+Using CLion:
+1) Create server CMake config in top right menu
+2) Set working dir to project root
+3) Create client CMake config
+4) Set working dir to project root
+5) Create compound config
+6) Add server and client configs to compound config
+From there, you can run as usual, and both tabs should open normally.
